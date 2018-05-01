@@ -31,16 +31,24 @@ public class TextAssociator {
 		 * Returns true if the WordInfo was successfully added, false otherwise
 		 */
 		public boolean add(WordInfo wi) {
-			return false;
-			// TODO: implement as explained in spec
+			if (chain.contains(wi)) {
+				return false;
+			} else {
+				chain.add(wi);
+				return true;
+			}
 		}
 		
 		/* Removes the given WordInfo object from the separate chain
 		 * Returns true if the WordInfo was successfully removed, false otherwise
 		 */
 		public boolean remove(WordInfo wi) {
-			return false;
-			// TODO: implement as explained in spec
+			if (chain.contains(wi)) {
+				chain.remove(wi);
+				return true;
+			} else {
+				return false;
+			}
 		}
 		
 		// Returns the size of this separate chain
@@ -63,7 +71,8 @@ public class TextAssociator {
 	/* Creates a new TextAssociator without any associations 
 	 */
 	public TextAssociator() {
-		//TODO: Implement as explained in spec
+		size = 0;
+		table = new WordInfoSeparateChain[13];
 	}
 	
 	
@@ -72,7 +81,13 @@ public class TextAssociator {
 	 * Returns True if this word is successfully added
 	 */
 	public boolean addNewWord(String word) {
-		return false;
+		int spot = word.hashCode() % size;
+		if (table[spot] == null) {
+			table[spot] = new WordInfoSeparateChain();
+			return table[spot].add(new WordInfo(word));
+		} else {
+			return table[spot].add(new WordInfo(word));
+		}
 		//TODO: Implement as explained in spec
 	}
 	
