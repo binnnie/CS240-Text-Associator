@@ -81,14 +81,14 @@ public class TextAssociator {
 	 * Returns True if this word is successfully added
 	 */
 	public boolean addNewWord(String word) {
-		int spot = word.hashCode() % size;
+		WordInfo hold = new WordInfo(word);
+		int spot = hold.hashCode() % size;
 		if (table[spot] == null) {
 			table[spot] = new WordInfoSeparateChain();
-			return table[spot].add(new WordInfo(word));
+			return table[spot].add(hold);
 		} else {
-			return table[spot].add(new WordInfo(word));
+			return table[spot].add(hold);
 		}
-		//TODO: Implement as explained in spec
 	}
 	
 	
@@ -97,7 +97,11 @@ public class TextAssociator {
 	 * the association between the two words already exists
 	 */
 	public boolean addAssociation(String word, String association) {
-		return false;
+		WordInfo hold = new WordInfo(word);
+		List wordChain = table[hold.hashCode() % size].getElements();
+		if (wordChain.contains(hold) && wordChain.get(wordChain.indexOf(hold)).getAssociations().contains(association)) {
+
+		}
 		//TODO: Implement as explained in spec
 	}
 	
