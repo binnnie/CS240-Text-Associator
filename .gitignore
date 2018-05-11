@@ -1,5 +1,7 @@
 .idea
 CS240-Text-Associator.iml
 simple_thesaurus.txt
+large_thesaurus.txt
 WordInfo.java
 out
+ThesaurusClient.java

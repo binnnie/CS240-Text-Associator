@@ -1,5 +1,3 @@
-import java.time.format.TextStyle;
-
 public class MyClient {
     public static void main(String[] args){
         TextAssociator tester = new TextAssociator();
@@ -9,6 +7,6 @@ public class MyClient {
         tester.addNewWord("reee");
         tester.addAssociation("hi", "go away");
         tester.addAssociation("sill", "aaaa");
-        System.out.println(tester);
+        tester.prettyPrint();
     }
 }

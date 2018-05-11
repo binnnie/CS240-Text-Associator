@@ -1,3 +1,4 @@
+import javax.swing.plaf.SeparatorUI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +11,8 @@ import java.util.Set;
  * 
  */
 public class TextAssociator {
+	public static final int[] PRIME_LIST = {13};
+
 	private WordInfoSeparateChain[] table;
 	private int size;
 	
@@ -91,7 +94,6 @@ public class TextAssociator {
 		}
 	}
 	
-	
 	/* Adds an association between the given words. Returns true if association correctly added, 
 	 * returns false if first parameter does not already exist in the SpellChecker or if 
 	 * the association between the two words already exists
@@ -99,13 +101,13 @@ public class TextAssociator {
 	public boolean addAssociation(String word, String association) {
 		WordInfo hold = new WordInfo(word);
 		List<WordInfo> wordChain = table[hold.hashCode() % table.length].getElements();
-		if (wordChain.contains(hold) && !(wordChain.get(wordChain.indexOf(hold)).getAssociations().contains(association))) {
+		if (wordChain.contains(hold) && !(wordChain.get(wordChain.indexOf(hold)).getAssociations()
+                .contains(association))) {
 			wordChain.get(wordChain.indexOf(hold)).addAssociation(association);
 			return true;
 		} else {
-			return false;
-		}
-		//TODO: Implement as explained in spec
+            return false;
+        }
 	}
 	
 	
@@ -114,8 +116,9 @@ public class TextAssociator {
 	 * Note that only a source word can be removed by this method, not an association.
 	 */
 	public boolean remove(String word) {
-		return false;
-		//TODO: Implement as explained in spec
+		WordInfo hold = new WordInfo(word);
+		size--;
+		return table[hold.hashCode() % table.length].remove(hold);
 	}
 	
 	
@@ -123,8 +126,9 @@ public class TextAssociator {
 	 * Returns null if the given String does not exist in the TextAssociator
 	 */
 	public Set<String> getAssociations(String word) {
-		return null;
-		//TODO: Implement as explained in spec
+	    WordInfo hold = new WordInfo(word);
+        List<WordInfo> wordChain = table[hold.hashCode() % table.length].getElements();
+        return wordChain.get(wordChain.indexOf(hold)).getAssociations();
 	}
 	
 	
