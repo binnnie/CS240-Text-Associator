@@ -82,7 +82,7 @@ public class TextAssociator {
 	 */
 	public boolean addNewWord(String word) {
 		WordInfo hold = new WordInfo(word);
-		int spot = hold.hashCode() % size;
+		int spot = hold.hashCode() % table.length;
 		if (table[spot] == null) {
 			table[spot] = new WordInfoSeparateChain();
 			return table[spot].add(hold);
@@ -98,9 +98,12 @@ public class TextAssociator {
 	 */
 	public boolean addAssociation(String word, String association) {
 		WordInfo hold = new WordInfo(word);
-		List wordChain = table[hold.hashCode() % size].getElements();
-		if (wordChain.contains(hold) && wordChain.get(wordChain.indexOf(hold)).getAssociations().contains(association)) {
-
+		List<WordInfo> wordChain = table[hold.hashCode() % table.length].getElements();
+		if (wordChain.contains(hold) && !(wordChain.get(wordChain.indexOf(hold)).getAssociations().contains(association))) {
+			wordChain.get(wordChain.indexOf(hold)).addAssociation(association);
+			return true;
+		} else {
+			return false;
 		}
 		//TODO: Implement as explained in spec
 	}
