@@ -1,5 +1,6 @@
 import javax.swing.plaf.SeparatorUI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -11,10 +12,12 @@ import java.util.Set;
  * 
  */
 public class TextAssociator {
-	public static final int[] PRIME_LIST = {13};
+	public static final int[] PRIME_LIST = {13, 29, 61, 127, 257, 509, 1019, 2039, 4079, 8161,
+			16183, 32381, 64793, 128347, 256129, 512009, 624829, 1260751};
 
 	private WordInfoSeparateChain[] table;
 	private int size;
+	private int sizeStep;
 	
 	/* INNER CLASS
 	 * Represents a separate chain in your implementation of your hashing
@@ -75,7 +78,8 @@ public class TextAssociator {
 	 */
 	public TextAssociator() {
 		size = 0;
-		table = new WordInfoSeparateChain[13];
+		sizeStep = 0;
+		table = new WordInfoSeparateChain[PRIME_LIST[sizeStep]];
 	}
 	
 	
@@ -88,9 +92,42 @@ public class TextAssociator {
 		int spot = hold.hashCode() % table.length;
 		if (table[spot] == null) {
 			table[spot] = new WordInfoSeparateChain();
-			return table[spot].add(hold);
+			boolean added = table[spot].add(hold);
+			if (added) {
+				size++;
+				if (size == table.length) {
+					resize();
+				}
+			}
+			return added;
 		} else {
-			return table[spot].add(hold);
+			boolean added = table[spot].add(hold);
+			if (added) {
+				size++;
+				if (size == table.length) {
+					resize();
+				}
+			}
+			return added;
+		}
+	}
+
+	private void resize() {
+		sizeStep++;
+		WordInfoSeparateChain[] holdTable = new WordInfoSeparateChain[PRIME_LIST[sizeStep]];
+		for (WordInfoSeparateChain i : table) {
+			if (i != null) {
+				List<WordInfo> iChain = i.getElements();
+				for (WordInfo n : iChain) {
+					int spot = n.hashCode() % holdTable.length;
+					if (holdTable[spot] == null) {
+						holdTable[spot] = new WordInfoSeparateChain();
+						holdTable[spot].add(n);
+					} else {
+						holdTable[spot].add(n);
+					}
+				}
+			}
 		}
 	}
 	
@@ -117,8 +154,11 @@ public class TextAssociator {
 	 */
 	public boolean remove(String word) {
 		WordInfo hold = new WordInfo(word);
-		size--;
-		return table[hold.hashCode() % table.length].remove(hold);
+		boolean removed = table[hold.hashCode() % table.length].remove(hold);
+		if (removed) {
+			size--;
+		}
+		return removed;
 	}
 	
 	
@@ -127,8 +167,16 @@ public class TextAssociator {
 	 */
 	public Set<String> getAssociations(String word) {
 	    WordInfo hold = new WordInfo(word);
-        List<WordInfo> wordChain = table[hold.hashCode() % table.length].getElements();
-        return wordChain.get(wordChain.indexOf(hold)).getAssociations();
+	    if (table[hold.hashCode() % table.length] != null) {
+			List<WordInfo> wordChain = table[hold.hashCode() % table.length].getElements();
+			if (wordChain.contains(hold)) {
+				return wordChain.get(wordChain.indexOf(hold)).getAssociations();
+			} else {
+				return null;
+			}
+		} else {
+	    	return null;
+		}
 	}
 	
 	
