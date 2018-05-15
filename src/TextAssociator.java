@@ -11,6 +11,18 @@ import java.util.Set;
  * See write-up for implementation details and hints
  * 
  */
+
+/*
+ * Brandon Dixon, TJ Dillon, Sawyere Hendricks
+ * 05/15/2018
+ * TextAssociator.java
+ *
+ * A data structure which represents a hash table of WordInfo objects. Word Info objects store a
+ * a word and associations to that word so the object can be used for things like thesauruses.
+ * The hash table resolves collisions through separate chaining and resizes to prime numbers based
+ * on an internal class constant.
+ */
+
 public class TextAssociator {
 	public static final int[] PRIME_LIST = {13, 29, 61, 127, 257, 509, 1019, 2039, 4079, 8161,
 			16183, 32381, 64793, 128347, 256129, 512009, 624829, 1260751};
@@ -112,6 +124,7 @@ public class TextAssociator {
 		}
 	}
 
+	//Resizes the hash table to the next prime number in the PRIME_LIST.
 	private void resize() {
 		sizeStep++;
 		WordInfoSeparateChain[] holdTable = new WordInfoSeparateChain[PRIME_LIST[sizeStep]];
@@ -137,14 +150,18 @@ public class TextAssociator {
 	 */
 	public boolean addAssociation(String word, String association) {
 		WordInfo hold = new WordInfo(word);
-		List<WordInfo> wordChain = table[hold.hashCode() % table.length].getElements();
-		if (wordChain.contains(hold) && !(wordChain.get(wordChain.indexOf(hold)).getAssociations()
-                .contains(association))) {
-			wordChain.get(wordChain.indexOf(hold)).addAssociation(association);
-			return true;
+		if (table[hold.hashCode() % table.length] !=null) {
+			List<WordInfo> wordChain = table[hold.hashCode() % table.length].getElements();
+			if (wordChain.contains(hold) && !(wordChain.get(wordChain.indexOf(hold)).getAssociations()
+					.contains(association))) {
+				wordChain.get(wordChain.indexOf(hold)).addAssociation(association);
+				return true;
+			} else {
+				return false;
+			}
 		} else {
-            return false;
-        }
+			return false;
+		}
 	}
 	
 	
@@ -199,5 +216,17 @@ public class TextAssociator {
 			}
 		}
 		System.out.println();
+	}
+
+	//Prints every word in the hash table excluding associations.
+	public void printWords() {
+		for (WordInfoSeparateChain i : table) {
+			if (i != null) {
+				List<WordInfo> chain = i.getElements();
+				for (WordInfo n : chain) {
+					System.out.print(n.getWord() + ", "); // aware of the signposting issue.
+				}
+			}
+		}
 	}
 }
